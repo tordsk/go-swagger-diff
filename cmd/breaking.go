@@ -11,10 +11,28 @@
 //   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
-package main
 
-import "github.com/tordsk/go-swagger-diff/cmd"
+package cmd
 
-func main() {
-	cmd.Execute()
+import (
+	"github.com/spf13/cobra"
+	"github.com/tordsk/go-swagger-diff/internal"
+)
+
+var ref string
+
+var breakingCmd = &cobra.Command{
+	Use:   "breaking <swagger>",
+	Short: "will let you know if your api is breaking",
+	Long: `This will compare the supplied spec to another branch.
+Hints to which version to bump as well`,
+	Example: "breaking swagger.yaml --debug",
+	Args:    cobra.ExactArgs(1),
+
+	Run: internal.Breaking(&ref, &debug),
+}
+
+func init() {
+	breakingCmd.Flags().StringVarP(&ref, "ref", "r", "master", "ref to read the original spec from")
+	rootCmd.AddCommand(breakingCmd)
 }
